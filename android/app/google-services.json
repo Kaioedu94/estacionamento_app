@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "846460650504",
+    "project_id": "estacionamento-55178",
+    "storage_bucket": "estacionamento-55178.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846460650504:android:b74adc0158fc3a8cc67dbd",
+        "android_client_info": {
+          "package_name": "com.estacionamento.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA29MHXWubs6PLWeTZQVk87OGFdvS7OEPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
