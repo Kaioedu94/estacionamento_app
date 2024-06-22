@@ -10,7 +10,6 @@ import 'view/login_view.dart';
 import 'view/principal_view.dart';
 import 'view/historico_view.dart';
 import 'view/perfil_view.dart';
-import 'view/historico_entradas_saidas_view.dart';
 
 Future<void> main() async {
   // Inicialização do Firebase
@@ -41,8 +40,8 @@ class MainApp extends StatelessWidget {
         'principal': (context) => PrincipalView(),
         'historico': (context) => HistoricoView(),
         'perfil': (context) => PerfilView(),
-        'historicoEntradasSaidas': (context) => HistoricoEntradasSaidasView(),
       },
+      builder: DevicePreview.appBuilder, // Adiciona compatibilidade com DevicePreview
     );
   }
 }

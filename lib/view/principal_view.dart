@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, use_build_context_synchronously, unnecessary_cast
+// ignore_for_file: prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../controller/login_controller.dart';
 import '../controller/reserva_controller.dart';
-import '../controller/entrada_saida_controller.dart';
 
 class PrincipalView extends StatefulWidget {
   const PrincipalView({super.key});
@@ -20,8 +19,6 @@ class _PrincipalViewState extends State<PrincipalView> {
   Map<String, dynamic>? _userData;
   String? tipoFiltro;
   String? fileiraFiltro;
-
-  final EntradaSaidaController _entradaSaidaController = EntradaSaidaController();
 
   @override
   void initState() {
@@ -124,41 +121,6 @@ class _PrincipalViewState extends State<PrincipalView> {
                     print('Erro ao navegar para Histórico de Reservas: $error');
                   }
                 });
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.login),
-              title: Text('Registrar Entrada'),
-              onTap: () {
-                _escolherTipoVaga(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Registrar Saída'),
-              onTap: () {
-                _registrarSaida();
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.history_edu),
-              title: Text('Histórico de Entradas/Saídas'),
-              onTap: () {
-                Navigator.pushNamed(context, 'historicoEntradasSaidas').then((_) {
-                  Navigator.of(context).pop();
-                }).catchError((error) {
-                  if (kDebugMode) {
-                    print('Erro ao navegar para Histórico de Entradas/Saídas: $error');
-                  }
-                });
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configurações'),
-              onTap: () {
-                Navigator.pop(context); // Pode ser removido se não houver ação definida
               },
             ),
             ListTile(
@@ -319,165 +281,5 @@ class _PrincipalViewState extends State<PrincipalView> {
         );
       },
     );
-  }
-
-  void _escolherTipoVaga(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Escolher Tipo de Vaga"),
-          content: Text("Deseja utilizar uma vaga reservada ou disponível?"),
-          actions: [
-            TextButton(
-              child: Text("Reservada"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _escolherVagaReservada(context);
-              },
-            ),
-            TextButton(
-              child: Text("Disponível"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _escolherVagaDisponivel(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  
-
-void _escolherVagaReservada(BuildContext context) async {
-  try {
-    final reservas = await FirebaseFirestore.instance
-        .collection('reservas')
-        .where('usuarioId', isEqualTo: _currentUser?.uid)
-        .where('status', isEqualTo: 'ativa')
-        .get();
-
-    if (reservas.docs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Nenhuma vaga reservada encontrada.')));
-      _escolherVagaDisponivel(context);
-      return;
-    }
-
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: Text('Escolher Vaga Reservada'),
-          children: reservas.docs.map((doc) {
-            final reserva = doc.data() as Map<String, dynamic>;
-            return SimpleDialogOption(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _registrarEntrada(doc.id, reserva['numero'], reserva['fileira'], reserva['tipo'], true);
-              },
-              child: Text('Vaga: ${reserva['numero']} ${reserva['fileira']}'),
-            );
-          }).toList(),
-        );
-      },
-    );
-  } catch (e) {
-    if (kDebugMode) {
-      print('Erro ao buscar vagas reservadas: $e');
-    }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar vagas reservadas.')));
-  }
-}
-
-void _escolherVagaDisponivel(BuildContext context) async {
-  try {
-    final vagas = await FirebaseFirestore.instance
-        .collection('vagas')
-        .where('disponivel', isEqualTo: true)
-        .get();
-
-    if (vagas.docs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Nenhuma vaga disponível encontrada.')));
-      return;
-    }
-
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: Text('Escolher Vaga Disponível'),
-          children: vagas.docs.map((doc) {
-            final vaga = doc.data() as Map<String, dynamic>;
-            return SimpleDialogOption(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _registrarEntrada(null, vaga['numero'], vaga['fileira'], vaga['tipo'], false);
-              },
-              child: Text('Vaga: ${vaga['numero']} ${vaga['fileira']} - ${vaga['tipo']}'),
-            );
-          }).toList(),
-        );
-      },
-    );
-  } catch (e) {
-    if (kDebugMode) {
-      print('Erro ao buscar vagas disponíveis: $e');
-    }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar vagas disponíveis.')));
-  }
-}
-
-
-void _registrarEntrada(String? reservaId, String vagaId, bool isReserved, vaga, bool bool) async {
-  if (_currentUser != null) {
-    try {
-      // Registrar a entrada no controlador
-      await _entradaSaidaController.registrarEntrada(_currentUser!.uid, vagaId);
-
-      // Atualizar a vaga como ocupada
-      await FirebaseFirestore.instance.collection('vagas').doc(vagaId).update({
-        'disponivel': false,
-      });
-
-      // Atualizar o status da reserva, se for uma vaga reservada
-      if (isReserved && reservaId != null) {
-        await FirebaseFirestore.instance.collection('reservas').doc(reservaId).update({
-          'status': 'concluída',
-        });
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Entrada registrada com sucesso.')));
-    } catch (e) {
-      if (kDebugMode) {
-        print('Erro ao registrar entrada: $e');
-      }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao registrar entrada.')));
-    }
-  }
-}
-
-  void _registrarSaida() async {
-    if (_currentUser != null) {
-      try {
-        // Exemplo de vagaId; idealmente, você deve selecionar a vaga do usuário
-        String vagaId = '1A';
-        await _entradaSaidaController.registrarSaida(_currentUser!.uid, vagaId);
-        await FirebaseFirestore.instance.collection('vagas').doc(vagaId).update({
-          'disponivel': true,
-        });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saída registrada com sucesso.')));
-      } catch (e) {
-        if (kDebugMode) {
-          print('Erro ao registrar saída: $e');
-        }
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao registrar saída.')));
-      }
-    }
   }
 }
