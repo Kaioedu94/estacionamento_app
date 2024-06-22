@@ -33,7 +33,7 @@ class _EntradaSaidaViewState extends State<EntradaSaidaView> {
         stream: FirebaseFirestore.instance
             .collection('reservas')
             .where('usuarioId', isEqualTo: _currentUser?.uid)
-            .where('status', isEqualTo: true) // Considerando que 'status' seja booleano
+            .where('status', isEqualTo: 'ativa') // Alterado para string 'ativa'
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -119,7 +119,7 @@ class _EntradaSaidaViewState extends State<EntradaSaidaView> {
 
           // Cancelar a reserva
           await FirebaseFirestore.instance.collection('reservas').doc(reservaId).update({
-            'status': false, // Cancelada
+            'status': 'cancelada', // Atualiza para 'cancelada'
             'entradaConfirmada': false,
           });
 

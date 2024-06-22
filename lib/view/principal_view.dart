@@ -1,4 +1,6 @@
-// ignore_for_file: prefer_const_constructors
+// lib/view/principal_view.dart
+
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -134,6 +136,13 @@ class _PrincipalViewState extends State<PrincipalView> {
                     print('Erro ao navegar para Entrada e Saída: $error');
                   }
                 });
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Configurações'),
+              onTap: () {
+                Navigator.pop(context); // Pode ser removido se não houver ação definida
               },
             ),
             ListTile(
