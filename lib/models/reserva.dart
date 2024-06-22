@@ -4,11 +4,13 @@ class Reserva {
   final String usuarioId;
   final DateTime data;
   final String status;
-  final String numero; // Número da vaga
-  final String tipo; // Tipo da vaga
-  final String fileira; // Fileira da vaga
+  final String numero;
+  final String tipo;
+  final String fileira;
+  final DateTime? entrada; // Adicionado
+  final DateTime? saida;   // Adicionado
 
-  Reserva(this.usuarioId, this.data, this.status, this.numero, this.tipo, this.fileira);
+  Reserva(this.usuarioId, this.data, this.status, this.numero, this.tipo, this.fileira, this.entrada, this.saida);
 
   // Transforma um OBJETO em JSON
   Map<String, dynamic> toJson() {
@@ -19,6 +21,8 @@ class Reserva {
       'numero': numero,
       'tipo': tipo,
       'fileira': fileira,
+      'entrada': entrada,
+      'saida': saida,
     };
   }
 
@@ -31,6 +35,8 @@ class Reserva {
       json['numero'],
       json['tipo'],
       json['fileira'],
+      json['entrada'] != null ? (json['entrada'] as Timestamp).toDate() : null,
+      json['saida'] != null ? (json['saida'] as Timestamp).toDate() : null,
     );
   }
 }

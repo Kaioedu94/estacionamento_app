@@ -124,6 +124,19 @@ class _PrincipalViewState extends State<PrincipalView> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.car_repair),
+              title: Text('Entrada e Saída'),
+              onTap: () {
+                Navigator.pushNamed(context, 'entradaSaida').then((_) {
+                  Navigator.of(context).pop();
+                }).catchError((error) {
+                  if (kDebugMode) {
+                    print('Erro ao navegar para Entrada e Saída: $error');
+                  }
+                });
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.logout),
               title: Text('Sair'),
               onTap: () {
