@@ -349,6 +349,8 @@ class _PrincipalViewState extends State<PrincipalView> {
     );
   }
 
+  
+
 void _escolherVagaReservada(BuildContext context) async {
   try {
     final reservas = await FirebaseFirestore.instance
