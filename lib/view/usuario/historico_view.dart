@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../controller/reserva_controller.dart';
+import '../../controller/reserva_controller.dart';
 
 class HistoricoView extends StatefulWidget {
   const HistoricoView({super.key});
