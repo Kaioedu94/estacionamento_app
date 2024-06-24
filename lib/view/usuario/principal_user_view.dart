@@ -1,4 +1,4 @@
-// lib/view/principal_view.dart
+// lib/view/usuario/principal_user_view.dart
 
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, use_build_context_synchronously
 
@@ -9,14 +9,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../controller/login_controller.dart';
 import '../../controller/reserva_controller.dart';
 
-class PrincipalView extends StatefulWidget {
-  const PrincipalView({super.key});
+class PrincipalUserView extends StatefulWidget {
+  const PrincipalUserView({super.key});
 
   @override
-  State<PrincipalView> createState() => _PrincipalViewState();
+  State<PrincipalUserView> createState() => _PrincipalUserViewState();
 }
 
-class _PrincipalViewState extends State<PrincipalView> {
+class _PrincipalUserViewState extends State<PrincipalUserView> {
   User? _currentUser;
   Map<String, dynamic>? _userData;
   String? tipoFiltro;
@@ -211,12 +211,6 @@ class _PrincipalViewState extends State<PrincipalView> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          adicionarVaga(context);
-        },
-        child: Icon(Icons.add),
-      ),
     );
   }
 
@@ -229,79 +223,5 @@ class _PrincipalViewState extends State<PrincipalView> {
       query = query.where('fileira', isEqualTo: fileiraFiltro);
     }
     return query;
-  }
-
-  void adicionarVaga(BuildContext context) {
-    final txtNumero = TextEditingController();
-    String? tipoSelecionado;
-    String? fileiraSelecionada;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Adicionar Vaga"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: txtNumero,
-                decoration: InputDecoration(
-                  labelText: 'Número',
-                ),
-              ),
-              DropdownButton<String>(
-                hint: Text('Tipo'),
-                value: tipoSelecionado,
-                items: ['coberta', 'descoberta']
-                    .map((tipo) => DropdownMenuItem(value: tipo, child: Text(tipo)))
-                    .toList(),
-                onChanged: (valor) {
-                  setState(() {
-                    tipoSelecionado = valor;
-                  });
-                },
-              ),
-              DropdownButton<String>(
-                hint: Text('Fileira'),
-                value: fileiraSelecionada,
-                items: ['A', 'B', 'C', 'D']
-                    .map((fileira) => DropdownMenuItem(value: fileira, child: Text(fileira)))
-                    .toList(),
-                onChanged: (valor) {
-                  setState(() {
-                    fileiraSelecionada = valor;
-                  });
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: Text("Salvar"),
-              onPressed: () {
-                if (txtNumero.text.isEmpty || tipoSelecionado == null || fileiraSelecionada == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Preencha todos os campos')));
-                  return;
-                }
-                FirebaseFirestore.instance.collection('vagas').add({
-                  'numero': txtNumero.text,
-                  'disponivel': true,
-                  'tipo': tipoSelecionado,
-                  'fileira': fileiraSelecionada,
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
