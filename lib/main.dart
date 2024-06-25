@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
+import 'view/admin/reservas_view.dart';
+import 'view/admin/users_view.dart';
 import 'view/cadastrar_view.dart';
 import 'view/login_view.dart';
 import 'view/usuario/principal_user_view.dart';
@@ -51,6 +53,8 @@ class MainApp extends StatelessWidget {
         'principal_admin': (context) => PrincipalAdminView(),
         'entradaSaida': (context) => EntradaSaidaView(),
         'monitoramento': (context) => MonitoramentoView(),
+        'usersView': (context) => UsersView(),
+        'reservasView': (context) => ReservasView(),
       },
       builder: DevicePreview.appBuilder,
     );

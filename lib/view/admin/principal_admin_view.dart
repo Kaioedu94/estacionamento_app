@@ -98,6 +98,32 @@ class _PrincipalAdminViewState extends State<PrincipalAdminView> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Gerenciamento de Usuários'),
+              onTap: () {
+                Navigator.pushNamed(context, 'usersView').then((_) {
+                  Navigator.of(context).pop();
+                }).catchError((error) {
+                  if (kDebugMode) {
+                    print('Erro ao navegar para Gerenciamento de Usuários: $error');
+                  }
+                });
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.book_online),
+              title: Text('Gerenciamento de Reservas'),
+              onTap: () {
+                Navigator.pushNamed(context, 'reservasView').then((_) {
+                  Navigator.of(context).pop();
+                }).catchError((error) {
+                  if (kDebugMode) {
+                    print('Erro ao navegar para Gerenciamento de Reservas: $error');
+                  }
+                });
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.logout),
               title: Text('Sair'),
               onTap: () {
