@@ -1,13 +1,13 @@
 // principal_admin_view.dart
 
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../controller/login_controller.dart';
-import '../../controller/reserva_controller.dart';
+
 
 class PrincipalAdminView extends StatefulWidget {
   const PrincipalAdminView({super.key});
@@ -137,9 +137,8 @@ class _PrincipalAdminViewState extends State<PrincipalAdminView> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
-                          onPressed: () async {
-                            await ReservaController().adicionarReserva(context, vaga.id);
-                            setState(() {});
+                          onPressed: () {
+                            _editarVaga(context, vaga.id, vagaData);
                           },
                           child: Text('Editar'),
                         ),
@@ -234,6 +233,79 @@ class _PrincipalAdminViewState extends State<PrincipalAdminView> {
                 FirebaseFirestore.instance.collection('vagas').add({
                   'numero': txtNumero.text,
                   'disponivel': true,
+                  'tipo': tipoSelecionado,
+                  'fileira': fileiraSelecionada,
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _editarVaga(BuildContext context, String vagaId, Map<String, dynamic> vagaData) {
+    final txtNumero = TextEditingController(text: vagaData['numero']);
+    String? tipoSelecionado = vagaData['tipo'];
+    String? fileiraSelecionada = vagaData['fileira'];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Editar Vaga"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: txtNumero,
+                decoration: InputDecoration(
+                  labelText: 'Número',
+                ),
+              ),
+              DropdownButton<String>(
+                hint: Text('Tipo'),
+                value: tipoSelecionado,
+                items: ['coberta', 'descoberta']
+                    .map((tipo) => DropdownMenuItem(value: tipo, child: Text(tipo)))
+                    .toList(),
+                onChanged: (valor) {
+                  setState(() {
+                    tipoSelecionado = valor;
+                  });
+                },
+              ),
+              DropdownButton<String>(
+                hint: Text('Fileira'),
+                value: fileiraSelecionada,
+                items: ['A', 'B', 'C', 'D']
+                    .map((fileira) => DropdownMenuItem(value: fileira, child: Text(fileira)))
+                    .toList(),
+                onChanged: (valor) {
+                  setState(() {
+                    fileiraSelecionada = valor;
+                  });
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Salvar"),
+              onPressed: () {
+                if (txtNumero.text.isEmpty || tipoSelecionado == null || fileiraSelecionada == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Preencha todos os campos')));
+                  return;
+                }
+                FirebaseFirestore.instance.collection('vagas').doc(vagaId).update({
+                  'numero': txtNumero.text,
                   'tipo': tipoSelecionado,
                   'fileira': fileiraSelecionada,
                 });
