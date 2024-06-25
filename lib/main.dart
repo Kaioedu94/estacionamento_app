@@ -8,14 +8,15 @@ import 'package:estacionamento_app/view/usuario/entrada_saida_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'firebase_options.dart';
+
 import 'view/cadastrar_view.dart';
 import 'view/login_view.dart';
 import 'view/usuario/principal_user_view.dart';
 import 'view/usuario/historico_view.dart';
 import 'view/usuario/perfil_view.dart';
 import 'view/admin/principal_admin_view.dart';
+import 'view/admin/monitoramento_view.dart';
 
 Future<void> main() async {
   // Inicialização do Firebase
@@ -49,6 +50,7 @@ class MainApp extends StatelessWidget {
         'perfil': (context) => PerfilView(),
         'principal_admin': (context) => PrincipalAdminView(),
         'entradaSaida': (context) => EntradaSaidaView(),
+        'monitoramento': (context) => MonitoramentoView(),
       },
       builder: DevicePreview.appBuilder,
     );
